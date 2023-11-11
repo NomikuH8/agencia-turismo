@@ -36,7 +36,7 @@ List<string> menuPagamentos = new List<string>();
 menuPagamentos.Add("Visualizar pagamentos enviados a fornecedor");
 
 GeradorMenu gerador = new GeradorMenu();
-BancoDados bancoDados = new BancoDados();
+BancoDados bancoDados = new BancoDados(true);
 MainFunction();
 
 void MainFunction()
@@ -55,12 +55,16 @@ void MainFunction()
                 ClientesFunction();
                 break;
             case "fornecedores":
+                FornecedoresFunction();
                 break;
             case "serviços":
+                ServicosFunction();
                 break;
             case "compras":
+                ComprasFunction();
                 break;
             case "pagamentos":
+                PagamentosFunction();
                 break;
             case "sair":
                 opcaoSair = true;
@@ -126,11 +130,12 @@ void ClientesFunction()
         gerador.LimparTela();
 
         Console.WriteLine("CLIENTES CADASTRADOS");
-        Console.WriteLine("Nome\t\t\tE-mail");
+        Console.WriteLine();
 
         foreach (Cliente cliente in bancoDados.Clientes)
         {
-            Console.WriteLine(cliente.Nome + "\t\t\t" + cliente.Email);
+            Console.WriteLine(cliente.Nome + "\n└- " + cliente.Email);
+            Console.WriteLine();
         }
     }
 
@@ -205,8 +210,360 @@ void ClientesFunction()
     }
 }
 
-void FornecedoresFunction() { }
-void ServicosFunction() { }
+void FornecedoresFunction()
+{
+    while (true)
+    {
+        gerador.LimparTela();
+        gerador.GerarMenu("Início > Fornecedores", menuFornecedor, true);
+        int opcao = gerador.PedirInput("Selecione uma opção: ");
+        bool opcaoSair = false;
+        string opcaoEscolhida = gerador.PegarOpcaoEscolhida(opcao, menuFornecedor).ToLower();
+
+        switch (opcaoEscolhida)
+        {
+            case "visualizar":
+                FornecedorGet();
+                Console.ReadKey();
+                break;
+            case "cadastrar":
+                FornecedorPost();
+                Console.ReadKey();
+                break;
+            case "atualizar":
+                FornecedorPut();
+                Console.ReadKey();
+                break;
+            case "excluir":
+                FornecedorDelete();
+                Console.ReadKey();
+                break;
+            case "associar a serviço":
+                FornecedorAssociarServico();
+                break;
+            case "sair":
+                opcaoSair = true;
+                break;
+            default:
+                Console.WriteLine("Opção inválida.");
+                Console.ReadKey();
+                break;
+        }
+
+        if (opcaoSair)
+        {
+            break;
+        }
+    }
+
+    void FornecedorGet()
+    {
+        gerador.LimparTela();
+
+        Console.WriteLine("FORNECEDORES CADASTRADOS");
+        Console.WriteLine();
+
+        foreach (Fornecedor fornecedor in bancoDados.Fornecedores)
+        {
+            string saida = "";
+            saida += fornecedor.Nome;
+
+            if (fornecedor.Servicos.Count > 0)
+            {
+                saida += "\n└- ";
+            }
+
+            foreach (Servico servico in fornecedor.Servicos)
+            {
+                saida += servico.Nome;
+
+                int index = fornecedor.Servicos.FindIndex(s => s.Nome == servico.Nome);
+                if (index != fornecedor.Servicos.Count - 1)
+                    saida += ", ";
+            }
+
+            Console.WriteLine(saida);
+            Console.WriteLine();
+        }
+    }
+
+    void FornecedorPost()
+    {
+        List<string> perguntas = new List<string>();
+        perguntas.Add("Nome: ");
+
+        gerador.LimparTela();
+        List<string> respostas = gerador.FazerPerguntas(perguntas);
+        Fornecedor fornecedor = new Fornecedor(respostas[0]);
+        bancoDados.Fornecedores.Add(fornecedor);
+
+        Console.WriteLine();
+
+        Console.WriteLine("Fornecedor adicionado com sucesso!");
+    }
+
+    void FornecedorPut()
+    {
+        FornecedorGet();
+
+        Console.WriteLine();
+
+        List<string> perguntas = new List<string>();
+        perguntas.Add("Nome do fornecedor a mudar: ");
+        perguntas.Add("Novo nome: ");
+
+        List<string> respostas = gerador.FazerPerguntas(perguntas);
+
+        bool achado = false;
+        foreach (Fornecedor fornecedor in bancoDados.Fornecedores)
+        {
+            if (fornecedor.Nome.ToLower() == respostas[0].ToLower())
+            {
+                achado = true;
+                fornecedor.setNome(respostas[1]);
+                break;
+            }
+        }
+
+        Console.WriteLine();
+
+        if (!achado) Console.WriteLine("Fornecedor não encontrado!");
+        else Console.WriteLine("Fornecedor alterado com sucesso!");
+    }
+
+    void FornecedorDelete()
+    {
+        FornecedorGet();
+
+        Console.WriteLine();
+
+        List<string> perguntas = new List<string>();
+        perguntas.Add("Nome do fornecedor a deletar: ");
+
+        List<string> respostas = gerador.FazerPerguntas(perguntas);
+
+        int index = bancoDados.Fornecedores.FindIndex(f => f.Nome.ToLower() == respostas[0].ToLower());
+        if (index > -1)
+        {
+            bancoDados.Fornecedores.RemoveAt(index);
+            Console.WriteLine("Fornecedor apagado com sucesso!");
+        }
+        else
+        {
+            Console.WriteLine("Fornecedor não encontrado!");
+        }
+    }
+
+    void FornecedorAssociarServico()
+    {
+        FornecedorGet();
+
+        Console.WriteLine();
+
+        Console.WriteLine("SERVICOS CADASTRADOS");
+        Console.WriteLine("Nome");
+        foreach (Servico servico in bancoDados.Servicos)
+        {
+            Console.WriteLine(servico.Nome);
+        }
+
+        Console.WriteLine();
+
+        List<string> perguntas = new List<string>();
+        perguntas.Add("Nome do fornecedor: ");
+        perguntas.Add("Nome do serviço: ");
+
+        List<string> respostas = gerador.FazerPerguntas(perguntas);
+
+        int indexFornecedor = bancoDados.Fornecedores.FindIndex(f => f.Nome.ToLower() == respostas[0].ToLower());
+        int indexServico = bancoDados.Servicos.FindIndex(s => s.Nome.ToLower() == respostas[1].ToLower());
+
+        if (indexFornecedor < 0)
+            Console.WriteLine("Fornecedor não encontrado!");
+
+        if (indexServico < 0)
+            Console.WriteLine("Serviço não encontrado!");
+
+        if (indexFornecedor >= 0 && indexServico >= 0)
+        {
+            bancoDados.Fornecedores[indexFornecedor].AssociarServico(bancoDados.Servicos[indexServico]);
+            Console.WriteLine("Associado serviço ao fornecedor com sucesso!");
+        }
+    }
+}
+
+void ServicosFunction()
+{
+    while (true)
+    {
+        gerador.LimparTela();
+        gerador.GerarMenu("Início > Serviços", menuServico, true);
+        int opcao = gerador.PedirInput("Selecione uma opção: ");
+        bool opcaoSair = false;
+        string opcaoEscolhida = gerador.PegarOpcaoEscolhida(opcao, menuServico).ToLower();
+
+        switch (opcaoEscolhida)
+        {
+            case "visualizar":
+                ServicoGet();
+                Console.ReadKey();
+                break;
+            case "cadastrar":
+                ServicoPost();
+                Console.ReadKey();
+                break;
+            case "atualizar":
+                ServicoPut();
+                Console.ReadKey();
+                break;
+            case "excluir":
+                ServicoDelete();
+                Console.ReadKey();
+                break;
+            case "sair":
+                opcaoSair = true;
+                break;
+            default:
+                Console.WriteLine("Opção inválida.");
+                Console.ReadKey();
+                break;
+        }
+
+        if (opcaoSair)
+        {
+            break;
+        }
+    }
+
+    void ServicoGet()
+    {
+        gerador.LimparTela();
+
+        Console.WriteLine("SERVICOS CADASTRADOS");
+        Console.WriteLine();
+        foreach (Servico servico in bancoDados.Servicos)
+        {
+            Console.WriteLine("Nome: " + servico.Nome);
+            Console.WriteLine("Modalidade de pagamento: " + servico.ModalidadePagamento);
+            Console.WriteLine("Valor: " + servico.Valor);
+            Console.WriteLine();
+        }
+    }
+
+    void ServicoPost()
+    {
+        List<string> perguntas = new List<string>();
+        perguntas.Add("Nome: ");
+        perguntas.Add("Modalidade de pagamento: ");
+        perguntas.Add("Valor (apenas numeros): ");
+
+        List<string> respostas = new List<string>();
+        while (true)
+        {
+            gerador.LimparTela();
+            respostas = gerador.FazerPerguntas(perguntas);
+
+            if (!double.TryParse(respostas[2], out _)) {
+                Console.WriteLine("Valor inválido.");
+                Console.ReadKey();
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        Servico servico = new Servico(respostas[0], respostas[1], double.Parse(respostas[2]));
+        bancoDados.Servicos.Add(servico);
+
+        Console.WriteLine();
+
+        Console.WriteLine("Serviço adicionado com sucesso!");
+    }
+
+    void ServicoPut()
+    {
+        List<string> perguntas = new List<string>();
+        perguntas.Add("Nome do serviço a mudar: ");
+        perguntas.Add("Novo nome: ");
+        perguntas.Add("Nova modalidade de pagamento: ");
+        perguntas.Add("Novo valor (apenas numeros): ");
+
+        List<string> respostas = new List<string>();
+        while (true)
+        {
+            gerador.LimparTela();
+
+            ServicoGet();
+            Console.WriteLine();
+
+            respostas = gerador.FazerPerguntas(perguntas);
+
+            if (!double.TryParse(respostas[3], out _))
+            {
+                Console.WriteLine("Valor inválido.");
+                Console.ReadKey();
+            }
+            else
+            {
+                break;
+            }
+
+        }
+
+        bool achado = false;
+        foreach (Servico servico in bancoDados.Servicos)
+        {
+            if (servico.Nome.ToLower() == respostas[0].ToLower())
+            {
+                achado = true;
+                servico.setNome(respostas[1]);
+                servico.setModalidadePagamento(respostas[2]);
+                servico.setValor(double.Parse(respostas[3]));
+                break;
+            }
+        }
+
+        Console.WriteLine();
+
+        if (!achado) Console.WriteLine("Serviço não encontrado!");
+        else Console.WriteLine("Serviço alterado com sucesso!");
+    }
+
+    void ServicoDelete()
+    {
+        ServicoGet();
+
+        Console.WriteLine();
+
+        List<string> perguntas = new List<string>();
+        perguntas.Add("Nome do serviço a deletar: ");
+
+        List<string> respostas = gerador.FazerPerguntas(perguntas);
+
+        int index = bancoDados.Servicos.FindIndex(s => s.Nome.ToLower() == respostas[0].ToLower());
+        if (index > -1)
+        {
+            foreach (Fornecedor fornecedor in bancoDados.Fornecedores)
+            {
+                int indexServicoInFornecedor = fornecedor.Servicos.FindIndex(s => s.Nome.ToLower() == respostas[0].ToLower());
+                if (indexServicoInFornecedor > -1)
+                {
+                    fornecedor.Servicos.RemoveAt(indexServicoInFornecedor);
+                    Console.WriteLine("Serviço " + respostas[0] + " desassociado do fornecedor " + fornecedor.Nome);
+                }
+            }
+            bancoDados.Servicos.RemoveAt(index);
+            Console.WriteLine("Serviço apagado com sucesso!");
+        }
+        else
+        {
+            Console.WriteLine("Serviço não encontrado!");
+        }
+    }
+}
+
 void ComprasFunction() { }
+
 void PagamentosFunction() { }
 
