@@ -10,6 +10,7 @@
         public void GerarMenu(string caminho, List<string> opcoes, bool temSair, string sairText = "0) Retornar")
         {
             Console.WriteLine(caminho);
+            Console.WriteLine();
 
             int contador = 1;
             foreach (string opcao in opcoes)
@@ -57,6 +58,32 @@
                 return "sair";
             }
             return "invalido";
+        }
+
+        public List<string> FazerPerguntas(List<string> perguntas)
+        {
+            List<string> respostas = new List<string>();
+
+            foreach (string pergunta in perguntas)
+            {
+                string? resposta;
+                while (true)
+                {
+                    Console.WriteLine(pergunta);
+                    resposta = Console.ReadLine();
+
+                    if (string.IsNullOrEmpty(resposta))
+                    {
+                        Console.WriteLine("Você deve escrever alguma coisa!");
+                    }
+                    else
+                    {
+                        respostas.Add(resposta);
+                        break;
+                    }
+                }
+            }
+            return respostas;
         }
     }
 }

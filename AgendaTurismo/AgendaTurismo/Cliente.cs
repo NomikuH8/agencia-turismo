@@ -19,5 +19,15 @@
             Transacao novaTransacao = new Transacao(this, servicos, fornecedor);
             return novaTransacao;
         }
+
+        public void setNome(string nome)
+        {
+            this.nome = nome;
+        }
+
+        public void setEmail(string email)
+        {
+            this.email = email;
+        }
     }
 }
