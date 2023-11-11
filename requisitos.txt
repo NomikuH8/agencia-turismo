@@ -1,0 +1,12 @@
+o sistema deve permitir o cadastro de clientes
+o sistema deve permitir que o usuário escolha o tipo de serviço
+o sistema deve permitir cadastro de fornecedor
+o sistema deve permitir cadastro de multiplos serviços por fornecedor
+o sistema deve emitir uma nota de pedido com todos os produtos 
+o sistema deve identificar o serviço e designar a modalidade de pagamento
+o sistema deve permitir cadastro de serviço
+
+o sistema deve funcionar somente no windows
+o sistema deve ter uma resposta de no máximo 0,5 segundos
+o sistema deve ser feito em C#
+o sistema deve ter o banco de dados todo na memória
