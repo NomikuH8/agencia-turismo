@@ -147,7 +147,7 @@ void ClientesFunction()
 
         gerador.LimparTela();
         List<string> respostas = gerador.FazerPerguntas(perguntas);
-        Cliente cliente = new Cliente(respostas[0], respostas[1]);
+        Cliente cliente = new Cliente(respostas[0].Trim(), respostas[1].Trim());
         bancoDados.Clientes.Add(cliente);
 
         Console.WriteLine();
@@ -171,11 +171,13 @@ void ClientesFunction()
         bool achado = false;
         foreach (Cliente cliente in bancoDados.Clientes)
         {
-            if (cliente.Nome.ToLower() == respostas[0].ToLower())
+            if (cliente.Deletado) continue;
+
+            if (cliente.Nome.ToLower() == respostas[0].Trim().ToLower())
             {
                 achado = true;
-                cliente.setNome(respostas[1]);
-                cliente.setEmail(respostas[2]);
+                cliente.setNome(respostas[1].Trim());
+                cliente.setEmail(respostas[2].Trim());
                 break;
             }
         }
@@ -197,7 +199,7 @@ void ClientesFunction()
 
         List<string> respostas = gerador.FazerPerguntas(perguntas);
 
-        int index = bancoDados.Clientes.FindIndex(c => c.Nome.ToLower() == respostas[0].ToLower());
+        int index = bancoDados.Clientes.FindIndex(c => !c.Deletado && c.Nome.ToLower() == respostas[0].Trim().ToLower());
         if (index > -1)
         {
             bancoDados.Clientes[index].setDeletado(true);
@@ -265,6 +267,8 @@ void FornecedoresFunction()
 
         foreach (Fornecedor fornecedor in bancoDados.Fornecedores)
         {
+            if (fornecedor.Deletado) continue;
+
             string saida = "";
             saida += fornecedor.Nome;
 
@@ -294,7 +298,7 @@ void FornecedoresFunction()
 
         gerador.LimparTela();
         List<string> respostas = gerador.FazerPerguntas(perguntas);
-        Fornecedor fornecedor = new Fornecedor(respostas[0]);
+        Fornecedor fornecedor = new Fornecedor(respostas[0].Trim());
         bancoDados.Fornecedores.Add(fornecedor);
 
         Console.WriteLine();
@@ -317,10 +321,10 @@ void FornecedoresFunction()
         bool achado = false;
         foreach (Fornecedor fornecedor in bancoDados.Fornecedores)
         {
-            if (fornecedor.Nome.ToLower() == respostas[0].ToLower())
+            if (fornecedor.Nome.ToLower() == respostas[0].Trim().ToLower())
             {
                 achado = true;
-                fornecedor.setNome(respostas[1]);
+                fornecedor.setNome(respostas[1].Trim());
                 break;
             }
         }
@@ -361,9 +365,11 @@ void FornecedoresFunction()
         Console.WriteLine();
 
         Console.WriteLine("SERVICOS CADASTRADOS");
-        Console.WriteLine("Nome");
+        Console.WriteLine();
         foreach (Servico servico in bancoDados.Servicos)
         {
+            if (servico.Deletado) continue;
+
             Console.WriteLine(servico.Nome);
         }
 
@@ -375,8 +381,8 @@ void FornecedoresFunction()
 
         List<string> respostas = gerador.FazerPerguntas(perguntas);
 
-        int indexFornecedor = bancoDados.Fornecedores.FindIndex(f => f.Nome.ToLower() == respostas[0].ToLower());
-        int indexServico = bancoDados.Servicos.FindIndex(s => s.Nome.ToLower() == respostas[1].ToLower());
+        int indexFornecedor = bancoDados.Fornecedores.FindIndex(f => !f.Deletado && f.Nome.ToLower() == respostas[0].ToLower());
+        int indexServico = bancoDados.Servicos.FindIndex(s => !s.Deletado && s.Nome.ToLower() == respostas[1].ToLower());
 
         if (indexFornecedor < 0)
             Console.WriteLine("Fornecedor não encontrado!");
@@ -465,7 +471,7 @@ void ServicosFunction()
             gerador.LimparTela();
             respostas = gerador.FazerPerguntas(perguntas);
 
-            if (!double.TryParse(respostas[2], out _)) {
+            if (!double.TryParse(respostas[2].Trim(), out _)) {
                 Console.WriteLine("Valor inválido.");
                 Console.ReadKey();
             }
@@ -475,7 +481,7 @@ void ServicosFunction()
             }
         }
 
-        Servico servico = new Servico(respostas[0], respostas[1], double.Parse(respostas[2]));
+        Servico servico = new Servico(respostas[0].Trim(), respostas[1].Trim(), double.Parse(respostas[2].Trim()));
         bancoDados.Servicos.Add(servico);
 
         Console.WriteLine();
@@ -501,7 +507,7 @@ void ServicosFunction()
 
             respostas = gerador.FazerPerguntas(perguntas);
 
-            if (!double.TryParse(respostas[3], out _))
+            if (!double.TryParse(respostas[3].Trim(), out _))
             {
                 Console.WriteLine("Valor inválido.");
                 Console.ReadKey();
@@ -516,12 +522,12 @@ void ServicosFunction()
         bool achado = false;
         foreach (Servico servico in bancoDados.Servicos)
         {
-            if (servico.Nome.ToLower() == respostas[0].ToLower())
+            if (servico.Nome.ToLower() == respostas[0].Trim().ToLower())
             {
                 achado = true;
-                servico.setNome(respostas[1]);
-                servico.setModalidadePagamento(respostas[2]);
-                servico.setValor(double.Parse(respostas[3]));
+                servico.setNome(respostas[1].Trim());
+                servico.setModalidadePagamento(respostas[2].Trim());
+                servico.setValor(double.Parse(respostas[3].Trim()));
                 break;
             }
         }
@@ -543,16 +549,16 @@ void ServicosFunction()
 
         List<string> respostas = gerador.FazerPerguntas(perguntas);
 
-        int index = bancoDados.Servicos.FindIndex(s => s.Nome.ToLower() == respostas[0].ToLower());
+        int index = bancoDados.Servicos.FindIndex(s => !s.Deletado && s.Nome.ToLower() == respostas[0].Trim().ToLower());
         if (index > -1)
         {
             foreach (Fornecedor fornecedor in bancoDados.Fornecedores)
             {
-                int indexServicoInFornecedor = fornecedor.Servicos.FindIndex(s => s.Nome.ToLower() == respostas[0].ToLower());
+                int indexServicoInFornecedor = fornecedor.Servicos.FindIndex(s => !s.Deletado && s.Nome.ToLower() == respostas[0].Trim().ToLower());
                 if (indexServicoInFornecedor > -1)
                 {
                     fornecedor.Servicos.RemoveAt(indexServicoInFornecedor);
-                    Console.WriteLine("Serviço " + respostas[0] + " desassociado do fornecedor " + fornecedor.Nome);
+                    Console.WriteLine("Serviço " + respostas[0].Trim() + " desassociado do fornecedor " + fornecedor.Nome);
                 }
             }
             bancoDados.Servicos[index].setDeletado(true);
@@ -664,7 +670,7 @@ void ComprasFunction()
 
             respostas = gerador.FazerPerguntas(perguntasFornecedor);
 
-            int indexFornecedor = bancoDados.Fornecedores.FindIndex(f => f.Nome.ToLower() == respostas[0].ToLower());
+            int indexFornecedor = bancoDados.Fornecedores.FindIndex(f => !f.Deletado && f.Nome.ToLower() == respostas[0].Trim().ToLower());
             if (indexFornecedor < 0)
             {
                 Console.WriteLine("Fornecedor não encontrado!");
@@ -695,7 +701,7 @@ void ComprasFunction()
             Console.WriteLine();
 
             respostas = gerador.FazerPerguntas(perguntasCliente);
-            int indexCliente = bancoDados.Clientes.FindIndex(c => c.Nome.ToLower() == respostas[0].ToLower());
+            int indexCliente = bancoDados.Clientes.FindIndex(c => !c.Deletado && c.Nome.ToLower() == respostas[0].Trim().ToLower());
             if (indexCliente < 0)
             {
                 Console.WriteLine("Cliente não encontrado!");
@@ -723,16 +729,16 @@ void ComprasFunction()
 
             respostas = gerador.FazerPerguntas(perguntasServicos);
 
-            foreach (string servicoNome in respostas[0].Split("/"))
+            foreach (string servicoNome in respostas[0].Trim().Split("/"))
             {
-                int indexServico = fornecedorSelecionado.Servicos.FindIndex(s => s.Nome.ToLower() == servicoNome.ToLower());
+                int indexServico = fornecedorSelecionado.Servicos.FindIndex(s => !s.Deletado && s.Nome.ToLower() == servicoNome.Trim().ToLower());
                 if (indexServico >= 0)
                 {
                     servicosSelecionados.Add(fornecedorSelecionado.Servicos[indexServico]);
                 }
             }
 
-            if (servicosSelecionados.Count != respostas[0].Split("/").Length)
+            if (servicosSelecionados.Count != respostas[0].Trim().Split("/").Length)
             {
                 Console.WriteLine("Alguns serviços não foram encontrados!");
                 Console.ReadKey();
