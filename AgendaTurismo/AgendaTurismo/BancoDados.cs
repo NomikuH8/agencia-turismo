@@ -8,7 +8,7 @@
         private List<Servico> servicos = new List<Servico>();
         private List<Transacao> transacoes = new List<Transacao>();
 
-        public List<Cliente> Clientes { get { return clientes;  } }
+        public List<Cliente> Clientes { get { return clientes; } }
         public List<Fornecedor> Fornecedores { get { return fornecedores; } }
         public List<InformacoesPagamento> InformacoesPagamentos { get { return informacoesPagamentos; } }
         public List<Servico> Servicos { get { return servicos; } }
@@ -49,9 +49,6 @@
 
             this.fornecedores.Add(new Fornecedor("Azul"));
             this.fornecedores[4].AssociarServico(this.servicos[1]);
-
-            this.informacoesPagamentos = informacoesPagamentos;
-            this.transacoes = transacoes;
         }
     }
 }

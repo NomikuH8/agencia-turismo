@@ -4,9 +4,11 @@
     {
         private string nome;
         private List<Servico> servicos = new List<Servico>();
+        private bool deletado;
 
         public string Nome { get { return nome; } }
         public List<Servico> Servicos { get { return servicos; } }
+        public bool Deletado { get { return deletado; } }
 
         public Fornecedor(string nome)
         {
@@ -22,6 +24,11 @@
         public void setNome(string nome)
         {
             this.nome = nome;
+        }
+
+        public void setDeletado(bool deletado)
+        {
+            this.deletado = deletado;
         }
 
         public void AssociarServico(Servico servico)
