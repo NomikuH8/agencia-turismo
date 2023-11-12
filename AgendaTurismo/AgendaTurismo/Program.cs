@@ -758,5 +758,49 @@ void ComprasFunction()
 
 void PagamentosFunction()
 {
+    while (true)
+    {
+        gerador.LimparTela();
+        gerador.GerarMenu("Início > Pagamentos", menuPagamentos, true);
+        int opcao = gerador.PedirInput("Selecione uma opção: ");
+        bool opcaoSair = false;
+        string opcaoEscolhida = gerador.PegarOpcaoEscolhida(opcao, menuPagamentos).ToLower();
+
+        switch (opcaoEscolhida)
+        {
+            case "visualizar pagamentos enviados a fornecedor":
+                PagamentoGet();
+                Console.ReadKey();
+                break;
+            case "sair":
+                opcaoSair = true;
+                break;
+            default:
+                Console.WriteLine("Opção inválida.");
+                Console.ReadKey();
+                break;
+        }
+
+        if (opcaoSair)
+        {
+            break;
+        }
+    }
+
+    void PagamentoGet()
+    {
+        gerador.LimparTela();
+
+        Console.WriteLine("PAGAMENTOS AOS FORNECEDORES");
+
+        Console.WriteLine();
+
+        Console.WriteLine("Vencimento\tFornecedor\tValor cobrado");
+        foreach (InformacoesPagamento informacoesPagamento in bancoDados.InformacoesPagamentos)
+        {
+            string date = informacoesPagamento.DataVencimento.ToShortDateString();
+            Console.WriteLine(date + "\t" + informacoesPagamento.Fornecedor.Nome + "\t" + informacoesPagamento.ValorCobrado);
+        }
+    }
 }
 
